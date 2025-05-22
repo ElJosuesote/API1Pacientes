@@ -5,7 +5,6 @@ const PORT = 3000;
 
 app.use(express.json());
 
-// Configuración AWS
 AWS.config.update({ region: "us-east-1" });
 const sqs = new AWS.SQS({ apiVersion: "2012-11-05" });
 const QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/992382818251/Test-Queue";
@@ -14,7 +13,10 @@ let pacientes = [
   { id: 1, nombre: "Josuesote", edad: 30 }
 ];
 
-// Crear paciente
+app.get('/pacientes', (req, res) => {
+  res.json(pacientes);
+});
+
 app.post('/pacientes', (req, res) => {
   const nuevoPaciente = {
     id: pacientes.length + 1,
@@ -25,7 +27,6 @@ app.post('/pacientes', (req, res) => {
   res.status(201).json(nuevoPaciente);
 });
 
-// Enviar solicitud de medicina a SQS
 app.post('/pacientes/:id/medicinas', (req, res) => {
   const pacienteId = parseInt(req.params.id);
   const paciente = pacientes.find(p => p.id === pacienteId);
@@ -63,3 +64,4 @@ app.post('/pacientes/:id/medicinas', (req, res) => {
 app.listen(PORT, () => {
   console.log(`API de Pacientes corriendo en http://localhost:${PORT}`);
 });
+
